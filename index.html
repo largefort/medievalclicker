@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Medieval Clicker</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: 'MedievalFont', serif;
+            background-color: #251c12;
+            color: #f7dfc4;
+        }
+
+        .container {
+            background-color: rgba(0, 0, 0, 0.8);
+            border: 5px solid #8a5c2e;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.8);
+            max-width: 800px;
+            margin: 100px auto;
+        }
+
+        .nav-pills .nav-link {
+            font-size: 18px;
+            padding: 10px 20px;
+            background-color: rgba(90, 57, 33, 0.8);
+            border-radius: 0;
+            border: 0;
+            color: #f7dfc4;
+        }
+
+        .nav-pills .nav-link.active {
+            background-color: rgba(60, 30, 15, 0.8);
+            color: #ffcc00;
+        }
+
+        .upgrade {
+            font-size: 18px;
+            color: #f7dfc4;
+            background-color: #8a5c2e;
+            border: 2px solid #5a3921;
+            padding: 15px;
+            margin: 10px 0;
+            cursor: pointer;
+            transition: background-color 0.3s, color 0.3s;
+            border-radius: 10px;
+        }
+
+        .upgrade:hover {
+            background-color: #5a3921;
+            color: #ffcc00;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 1;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background-color: #251c12;
+            color: #f7dfc4;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+            text-align: center;
+        }
+
+        .close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 24px;
+            color: #f7dfc4;
+            cursor: pointer;
+        }
+
+        .castle-image {
+            border: 5px solid #532c08;
+            border-radius: 10px;
+            max-width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <ul class="nav nav-pills nav-fill mb-3">
+            <li class="nav-item">
+                <a class="nav-link active" data-toggle="pill" href="#castle-tab"><i class="fas fa-castle"></i> Castle</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-toggle="pill" href="#skilling-tab"><i class="fas fa-hammer"></i> Skilling</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-toggle="pill" href="#shop-tab"><i class="fas fa-shopping-cart"></i> Shop</a>
+            </li>
+        </ul>
+        <div class="tab-content">
+            <div class="tab-pane fade show active" id="castle-tab">
+                <div class="text-center">
+                    <img id="castle" src="https://raw.githubusercontent.com/largefort/Medievalskilling/main/castle.png" alt="Castle" class="castle-image" />
+                    <div id="counter" class="mt-3">Gold coins: 0</div>
+                    <div id="owned-upgrades" class="mt-3">
+                        <div>Knights: <span id="knight-count">0</span></div>
+                        <div>Archers: <span id="archer-count">0</span></div>
+                        <div>Wizards: <span id="wizard-count">0</span></div>
+                        <div>Paladins: <span id="paladin-count">0</span></div>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane fade" id="skilling-tab">
+                <div class="text-center">
+                    <h2>Skilling</h2>
+                    <div class="upgrade" onclick="handleSkillingClick('woodcutting')">Woodcutting</div>
+                    <div class="upgrade" onclick="handleSkillingClick('mining')">Mining</div>
+                    <div class="mt-3">
+                        <div>Woodcutting Level: <span id="woodcutting-level">1</span></div>
+                        <div>Mining Level: <span id="mining-level">1</span></div>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane fade" id="shop-tab">
+                <div class="text-center">
+                    <h2>Shop</h2>
+                    <div class="upgrade" onclick="buyUpgrade('knight')"><i class="fas fa-chess-knight"></i> Knight (<span id="knight-cost">10</span> coins)</div>
+                    <div class="upgrade" onclick="buyUpgrade('archer')"><i class="fas fa-bullseye"></i> Archer (<span id="archer-cost">25</span> coins)</div>
+                    <div class="upgrade" onclick="buyUpgrade('wizard')"><i class="fas fa-hat-wizard"></i> Wizard (<span id="wizard-cost">50</span> coins)</div>
+                    <div class="upgrade" onclick="buyUpgrade('paladin')"><i class="fas fa-shield-alt"></i> Paladin (<span id="paladin-cost">100</span> coins)</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript libraries and scripts -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="script.js"></script>
+    <script>
+        function openReminderModal() {
+            document.getElementById("reminderModal").style.display = "block";
+        }
+
+        function closeReminderModal() {
+            document.getElementById("reminderModal").style.display = "none";
+        }
+
+        function startCountdown() {
+            var endDate = new Date();
+            endDate.setDate(endDate.getDate() + 1);
+            endDate.setHours(0, 0, 0, 0);
+
+            var countdownInterval = setInterval(function () {
+                var now = new Date().getTime();
+                var distance = endDate - now;
+
+                if (distance <= 0) {
+                    clearInterval(countdownInterval);
+                    document.getElementById("countdown").innerHTML = "Continue by tomorrow!";
+                } else {
+                    var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60);
+                    var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60);
+                    var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                    document.getElementById("countdown").innerHTML = "Next session in: " + hours + "h " + minutes + "m " + seconds + "s";
+                }
+            }, 1000);
+        }
+
+        window.onload = function () {
+            openReminderModal();
+            startCountdown();
+        };
+    </script>
+</body>
+</html>
