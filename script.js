@@ -9,6 +9,17 @@ let passiveIncome = 0;
 let db;
 let lastSaveTime = Date.now(); // Initialize lastSaveTime with the current time
 
+// Add an HTML audio element for the upgrade sound
+document.write(`
+<audio id="upgradeSound">
+    <source src="upgradesound.mp3" type="audio/mpeg">
+    Your browser does not support the audio element.
+</audio>
+`);
+
+// Preload the click sound
+const clickSound = new Audio("click-sound.mp3");
+
 function disableFingerZooming() {
     document.addEventListener('touchmove', function (event) {
         if (event.scale !== 1) { event.preventDefault(); }
@@ -78,6 +89,43 @@ function loadGameData() {
 
 initializeDB();
 
+// Function to toggle music
+function toggleMusic() {
+    const medievalThemeAudio = document.getElementById("medievaltheme");
+    if (medievalThemeAudio.paused) {
+        medievalThemeAudio.play();
+    } else {
+        medievalThemeAudio.pause();
+    }
+}
+
+// Function to toggle sound effects
+function toggleSoundEffects() {
+    const clickSoundAudio = document.getElementById("click-sound");
+    const upgradeSoundAudio = document.getElementById("upgradesound");
+    
+    clickSoundAudio.muted = !clickSoundAudio.muted;
+    upgradeSoundAudio.muted = !upgradeSoundAudio.muted;
+}
+
+// Add event listeners to the checkboxes
+document.getElementById("toggle-music").addEventListener("change", toggleMusic);
+document.getElementById("toggle-sfx").addEventListener("change", toggleSoundEffects);
+
+// Function to request fullscreen
+function requestFullscreen(element) {
+    if (element.requestFullscreen) {
+        element.requestFullscreen();
+    } else if (element.mozRequestFullScreen) { // Firefox
+        element.mozRequestFullScreen();
+    } else if (element.webkitRequestFullscreen) { // Chrome and Safari
+        element.webkitRequestFullscreen();
+    } else if (element.msRequestFullscreen) { // Internet Explorer
+        element.msRequestFullscreen();
+    }
+}
+
+
 function updateUI() {
     document.getElementById("counter").textContent = `Gold coins: ${compactNumberFormat(coins)}`;
     document.getElementById("knight-count").textContent = knightCount;
@@ -94,39 +142,51 @@ function clickCastle() {
     coins++;
     saveGameData();
     updateUI();
+
+    // Play the preloaded click sound
+    clickSound.play();
 }
 
 function buyUpgrade(type) {
+    let cost = 0;
+
     switch (type) {
         case "knight":
-            if (coins >= 10) {
-                coins -= 10;
+            cost = 10;
+            if (coins >= cost) {
+                coins -= cost;
                 knightCount++;
-                updatePassiveIncome(); // Update passive income when buying Knights
             }
             break;
         case "archer":
-            if (coins >= 25) {
-                coins -= 25;
+            cost = 25;
+            if (coins >= cost) {
+                coins -= cost;
                 archerCount++;
-                updatePassiveIncome(); // Update passive income when buying Archers
             }
             break;
         case "wizard":
-            if (coins >= 50) {
-                coins -= 50;
+            cost = 50;
+            if (coins >= cost) {
+                coins -= cost;
                 wizardCount++;
-                updatePassiveIncome(); // Update passive income when buying Wizards
             }
             break;
         case "paladin":
-            if (coins >= 100) {
-                coins -= 100;
+            cost = 100;
+            if (coins >= cost) {
+                coins -= cost;
                 paladinCount++;
-                updatePassiveIncome(); // Update passive income when buying Paladins
             }
             break;
     }
+
+    if (cost > 0) {
+        // Play the upgrade sound
+        const upgradeSound = document.getElementById("upgradeSound");
+        upgradeSound.play();
+    }
+
     saveGameData();
     updateUI();
 }
@@ -154,14 +214,19 @@ function handleSkillingClick(skill) {
 
 function updatePassiveIncome() {
     // Calculate passive income based on knights, archers, wizards, and paladins
-    const totalPassiveIncome = (knightCount + archerCount + wizardCount + paladinCount) * 1; // Adjust the income rate as needed
+    const knightIncomeRate = 1;   // Adjust the income rate for knights
+    const archerIncomeRate = 2;   // Adjust the income rate for archers
+    const wizardIncomeRate = 4;   // Adjust the income rate for wizards
+    const paladinIncomeRate = 8;  // Adjust the income rate for paladins
+
+    const totalPassiveIncome = (knightCount * knightIncomeRate + archerCount * archerIncomeRate + wizardCount * wizardIncomeRate + paladinCount * paladinIncomeRate);
     passiveIncome = totalPassiveIncome;
 }
 
 function earnPassiveIncome() {
     const currentTime = Date.now();
     const timeDifference = currentTime - lastSaveTime;
-    const offlinePassiveIncome = Math.floor((knightCount + archerCount + wizardCount + paladinCount) * 1 * (timeDifference / 1000));
+    const offlinePassiveIncome = Math.floor(passiveIncome * (timeDifference / 1000));
 
     coins += offlinePassiveIncome;
     lastSaveTime = currentTime; // Update the last save time
