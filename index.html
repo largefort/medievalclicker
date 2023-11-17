@@ -24,17 +24,25 @@
       margin: 30px auto;
       max-width: 800px;
       overflow: hidden;
+      display: flex; /* Use flexbox */
+    }
+
+    .sidebar {
+      width: 200px; /* Set the width of the sidebar */
+      background-color: #532c08;
+      padding: 15px;
     }
 
     .tab-content {
-      margin-top: 20px; /* Increased margin for better separation */
+      margin-top: 20px;
+      flex: 1; /* Allow the content to take remaining space */
     }
 
     .nav-pills .nav-link {
       font-size: 16px;
-      padding: 10px 15px; /* Increased padding for better touch interaction */
+      padding: 10px 15px;
       background-color: rgba(90, 57, 33, 0.8);
-      border-radius: 5px; /* Slightly reduced border radius */
+      border-radius: 5px;
       border: 3px solid #8a5c2e;
       color: #f7dfc4;
     }
@@ -107,7 +115,7 @@
     @media (max-width: 576px) {
       .nav-pills .nav-link {
         font-size: 14px;
-        padding: 8px 12px; /* Adjusted padding for smaller screens */
+        padding: 8px 12px;
       }
 
       .upgrade {
@@ -124,6 +132,15 @@
 </head>
 <body>
   <div class="container">
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <a class="nav-link active" data-toggle="pill" href="#castle-tab">Castle</a>
+      <a class="nav-link" data-toggle="pill" href="#skilling-tab">Skilling</a>
+      <a class="nav-link" data-toggle="pill" href="#shop-tab">Shop</a>
+      <a class="nav-link" data-toggle="pill" href="#settings-tab">Settings</a>
+    </div>
+
+    <!-- Content -->
     <div class="tab-content">
       <!-- Castle Tab -->
       <div class="tab-pane fade show active" id="castle-tab">
@@ -148,6 +165,7 @@
           </div>
         </div>
       </div>
+
       <!-- Skilling Tab -->
       <div class="tab-pane fade" id="skilling-tab">
         <div class="col-12 text-center">
@@ -168,6 +186,7 @@
           </div>
         </div>
       </div>
+
       <!-- Shop Tab -->
       <div class="tab-pane fade" id="shop-tab">
         <div class="col-12 text-center">
@@ -202,6 +221,7 @@
           </audio>
         </div>
       </div>
+
       <!-- Settings Tab -->
       <div class="tab-pane fade" id="settings-tab">
         <div class="col-12 text-center">
@@ -219,15 +239,25 @@
         </div>
       </div>
     </div>
-    <!-- Navigation Tabs -->
-    <div class="nav nav-pills nav-fill fixed-bottom">
-      <a class="nav-link active" data-toggle="pill" href="#castle-tab">Castle</a>
-      <a class="nav-link" data-toggle="pill" href="#skilling-tab">Skilling</a>
-      <a class="nav-link" data-toggle="pill" href="#shop-tab">Shop</a>
-      <a class="nav-link" data-toggle="pill" href="#settings-tab">Settings</a>
-    </div>
+
+    <!-- Fullscreen Button -->
+    <button onclick="toggleFullScreen()">Toggle Fullscreen</button>
   </div>
-  <!-- Add your fullscreen button and scripts here -->
+
+  <script>
+    // Function to toggle fullscreen
+    function toggleFullScreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen();
+      } else {
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        }
+      }
+    }
+  </script>
+
+  <!-- Bootstrap and other scripts -->
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
